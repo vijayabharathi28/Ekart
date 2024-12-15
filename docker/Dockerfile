@@ -1,11 +1,14 @@
-FROM openjdk:8u151-jdk-alpine3.7
+# Use an official OpenJDK image as a base image
+FROM openjdk:17-jdk-slim
 
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the jar file from the host to the container
+COPY target/ekart-0.0.1-SNAPSHOT.jar ekart.jar
+
+# Expose the port the app will run on
 EXPOSE 8070
 
-ENV APP_HOME /usr/src/app
-
-COPY target/shopping-cart-0.0.1-SNAPSHOT.jar $APP_HOME/app.jar
-
-WORKDIR $APP_HOME
-
-ENTRYPOINT exec java -jar app.jar
+# Run the Spring Boot app
+ENTRYPOINT ["java", "-jar", "ekart.jar"]
