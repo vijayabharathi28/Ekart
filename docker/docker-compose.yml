@@ -1,11 +1,8 @@
-version: '3'
 services:
   shop:
     image: vijayabharathi28/ekart:latest
     ports:
       - "8070:8070"
-    depends_on:
-      - mysql
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://my-mysql-container:3306/shopping_cart_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
