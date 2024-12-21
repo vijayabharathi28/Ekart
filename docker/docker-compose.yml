@@ -24,7 +24,7 @@ services:
     networks:
       - mynetwork
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      test: ["CMD", "nc", "-z", "localhost", "3306"]
       interval: 30s
       retries: 3
       start_period: 30s
