@@ -1,35 +1,36 @@
-version: '3'
-services:
-  shop:
-    image: vijayabharathi28/ekart:latest
-    ports:
-      - "8070:8070"
-    depends_on:
-      - mysql
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/shopping_cart_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
-    networks:
-      - mynetwork
-    entrypoint: ["sh", "-c", "until mysqladmin ping -h mysql --silent; do echo waiting for mysql; sleep 2; done; java -jar /app.jar"]
+version: '3.8'
 
+services:
   mysql:
     image: mysql:latest
+    container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: shopping_cart_db
+      MYSQL_ROOT_PASSWORD: root
     ports:
       - "3308:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
     networks:
-      - mynetwork
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "3306"]
-      interval: 30s
-      retries: 3
-      start_period: 30s
-      timeout: 30s
+      - ekart-mysql
+
+  app:
+    image: vijayabharathi28/ekart:latest
+    container_name: ekart
+    ports:
+      - "8070:8070"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/shopping_cart_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      - mysql
+    networks:
+      - ekart-mysql
+
+volumes:
+  mysql-data:
 
 networks:
-  mynetwork:
-    external: true  # Use the previously created external network
+  ekart-mysql:
+    driver: bridge
